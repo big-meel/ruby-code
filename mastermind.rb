@@ -137,6 +137,38 @@ end
 
 # Computer player
 class Computer < Player
+	
+	def initialize
+		@potential_guess = []
+		self.guess = {0=>"red", 1=>"red", 2=>"blue", 3=>"blue"}
+	end
+
+	# process feedback (if there are 2 'r's then both 1 and 2 has a digit in the correct slot, 
+	# if the result has 1 r, then only one digit (1 or 2)is in the correct slot. 
+	# if there are 2 w'sthen 1 and 2 are in incorrect slots 
+	# if there is 1 w then  1 or 2 is in incorrect slots
+
+	def guess_with_repetition
+	end
+
+
+	def guess_without_repetition
+	end
+
+	def process_feedback(feedback, turns_left)
+		if turns_left == 12
+			if feedback.count("r") == 2
+				@potential_guess[0] = "red"
+				@potential_guess[2] = "blue"
+			elsif feedback.count("r") == 1
+
+			end
+		end
+	end
+
+	def potential_guess
+
+	end
 
 end
 
