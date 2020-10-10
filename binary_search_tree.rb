@@ -8,6 +8,10 @@ class Node
     @left_child
     @right_child
   end
+  # Returns true if root has no children
+  def is_a_leaf?
+    self.left_child.nil? && self.right_child.nil?
+  end
 end
 
 
@@ -33,9 +37,9 @@ class Tree
   end
 
   # Insert Method: prev_node and child added so the writer methods left_child and right_child can be utilized
-  def insert(data, node = @root, prev_node =  nil, child = "")
-    return prev_node.right_child = Node.new(data) if node.nil? && child == 'right'
-    return prev_node.left_child = Node.new(data) if node.nil? && child == 'left'
+  def insert( data, node = @root, prev_node =  nil, child = "" ) 
+    return prev_node.right_child = Node.new( data ) if node.nil? && child == 'right'
+    return prev_node.left_child = Node.new( data ) if node.nil? && child == 'left'
       
     if node.data == data
       return node
@@ -46,14 +50,48 @@ class Tree
     end    
   end
 
-  # :delete method
+  # Finds the left most leaf in given node
+  def minimum_value( node )
+    current = node
 
+    while current.left_child != nil do
+      current = current.left_child
+    end
+
+    return current
+  end
+
+  def delete( key, node = root )
+    # If node to be deleted is a leaf, simply remove it from the tree
+    return node if node.is_a_leaf? && node.data == key
+       
+    if key < node.data
+      node.left_child = delete( key, node.left_child )
+    elsif key > node.data
+      node.right_child = delete(key, node.right_child)
+    end
+    # If node to be deleted has one child, copy child to the node and delete child
+    # If node to be deleted has two children, Find Inorder successor (next node in line
+    # eg. 6 comes after 5) copy successor contents to node and delete the successor
+  end
+
+  def find( key, node = root )
+    return nil if node.nil?
+    return node if node.data == key
+
+    if key > node.data
+      find( key, node.right_child )
+    elsif key < node.data
+      find( key, node.left_child )
+    end
+  end
+
+  # Method to return tree in a readable output
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
   end
-
 end
 
   test_array1 = [1,2,3,4,5,6,7,8]
@@ -62,10 +100,16 @@ end
   tree = Tree.new(test_array1)
   puts tree.root.data
   puts tree.root.left_child.left_child.data
-  x = tree.root.left_child.left_child.left_child
-  tree.insert(9)
-  tree.insert(0)
+  x = tree.root.left_child.left_child
+  tree.insert( 9 )
+  tree.insert( 0 )
   tree.pretty_print
+  puts tree.minimum_value( tree.root ).data
+  # tree.delete(0)
+  tree.pretty_print
+  puts tree.find(3)
+
+  
 
   
   # tree.root.left_child.left_child.left_child = Node.new(0)
