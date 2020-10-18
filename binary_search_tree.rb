@@ -12,6 +12,21 @@ class Node
   def is_a_leaf?
     self.left_child.nil? && self.right_child.nil?
   end
+
+  # Returns single child of node, nil if node has more than one or none
+  def has_one_child
+    if self.left_child.nil? && !self.right_child.nil?
+      self.right_child
+    elsif !self.left_child.nil? && self.right_child.nil?
+      self.left_child
+    else
+      nil
+    end
+  end
+
+  def inorder_successor
+    
+  end
 end
 
 
@@ -22,18 +37,18 @@ class Tree
     @root = build_tree(array.sort.uniq)
   end
 
-    # Recursive Method; begin with first and last defined with default values
-    def build_tree( arr, first_index = 0, last_index = arr.length - 1 )
-      return nil if first_index > last_index
+  # Recursive Method; begin with first and last defined with default values
+  def build_tree( arr, first_index = 0, last_index = arr.length - 1 )
+    return nil if first_index > last_index
 
-    middle_of_array = (first_index + last_index)/2
+  middle_of_array = (first_index + last_index)/2
 
-    root = Node.new(arr[middle_of_array])
+  root = Node.new(arr[middle_of_array])
 
-    root.left_child = build_tree(arr, first_index, middle_of_array - 1)
-    root.right_child = build_tree(arr, middle_of_array + 1, last_index)
+  root.left_child = build_tree(arr, first_index, middle_of_array - 1)
+  root.right_child = build_tree(arr, middle_of_array + 1, last_index)
 
-    return root 
+  return root 
   end
 
   # Insert Method: prev_node and child added so the writer methods left_child and right_child can be utilized
@@ -61,18 +76,29 @@ class Tree
     return current
   end
 
-  def delete( key, node = root )
-    # If node to be deleted is a leaf, simply remove it from the tree
-    return node if node.is_a_leaf? && node.data == key
-       
+  # If node to be deleted is a leaf, simply remove it from the tree
+  # If node to be deleted has one child, copy child to the node and delete child
+  # If node to be deleted has two children, Find Inorder successor (next node in line
+  # eg. 6 comes after 5) copy successor contents to node and delete the successor
+  def delete( key, node = root, prev_node = nil, child = Proc.new {})
+    if node.data == key
+      if node.is_a_leaf? 
+        return child.call(prev_node, nil)
+      elsif node.has_one_child
+        return child.call(prev_node, node.has_one_child)
+      else
+        
+      end
+    end 
+    
+    # Use Procs to identify which child is being affected
     if key < node.data
-      node.left_child = delete( key, node.left_child )
+      left = Proc.new {|node, new_node| node.left_child = new_node}
+      delete(key, node.left_child, node, left)
     elsif key > node.data
-      node.right_child = delete(key, node.right_child)
+      right = Proc.new {|node, new_node| node.right_child = new_node}
+      delete(key, node.right_child, node, right)
     end
-    # If node to be deleted has one child, copy child to the node and delete child
-    # If node to be deleted has two children, Find Inorder successor (next node in line
-    # eg. 6 comes after 5) copy successor contents to node and delete the successor
   end
 
   def find( key, node = root )
@@ -94,20 +120,31 @@ class Tree
   end
 end
 
-  test_array1 = [1,2,3,4,5,6,7,8]
-  test_array2 = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+  # test_array1 = [1,2,3,4,5,6,7,8]
+  # test_array2 = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 
-  tree = Tree.new(test_array1)
-  puts tree.root.data
-  puts tree.root.left_child.left_child.data
-  x = tree.root.left_child.left_child
-  tree.insert( 9 )
-  tree.insert( 0 )
-  tree.pretty_print
-  puts tree.minimum_value( tree.root ).data
+  # tree = Tree.new(test_array1)
+  # # puts tree.root.data
+  # # puts tree.root.left_child.left_child.data
+  # x = tree.root.left_child.left_child
+  # x.left_child = Node.new(0)
+  # puts tree.pretty_print
   # tree.delete(0)
-  tree.pretty_print
-  puts tree.find(3)
+  # puts tree.pretty_print
+  # tree.delete(1)
+  # puts tree.pretty_print
+  # tree.delete(7)
+  # puts tree.pretty_print
+  # puts tree.root.right_child.right_child.has_one_child.data
+  # tree.insert( 9 )
+  # tree.insert( 0 )
+  # tree.pretty_print
+  # puts tree.minimum_value( tree.root ).data
+  # tree.pretty_print
+  # puts tree.find(3)
+  # puts tree.delete(0)
+  # tree.pretty_print
+  
 
   
 
