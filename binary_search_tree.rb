@@ -24,38 +24,46 @@ class Node
     end
   end
 
-  def inorder_successor
+  # Finds the left most leaf in given node
+  def minimum_value
+    current = self
     
+    while current.left_child != nil do
+      current = current.left_child
+    end
+    
+    return current.data
   end
+
 end
 
 
 class Tree
   attr_accessor :root
-
+  
   def initialize(array)
     @root = build_tree(array.sort.uniq)
   end
-
+  
   # Recursive Method; begin with first and last defined with default values
   def build_tree( arr, first_index = 0, last_index = arr.length - 1 )
     return nil if first_index > last_index
-
-  middle_of_array = (first_index + last_index)/2
-
-  root = Node.new(arr[middle_of_array])
-
-  root.left_child = build_tree(arr, first_index, middle_of_array - 1)
-  root.right_child = build_tree(arr, middle_of_array + 1, last_index)
-
-  return root 
+    
+    middle_of_array = (first_index + last_index)/2
+    
+    root = Node.new(arr[middle_of_array])
+    
+    root.left_child = build_tree(arr, first_index, middle_of_array - 1)
+    root.right_child = build_tree(arr, middle_of_array + 1, last_index)
+    
+    return root 
   end
-
+  
   # Insert Method: prev_node and child added so the writer methods left_child and right_child can be utilized
   def insert( data, node = @root, prev_node =  nil, child = "" ) 
     return prev_node.right_child = Node.new( data ) if node.nil? && child == 'right'
     return prev_node.left_child = Node.new( data ) if node.nil? && child == 'left'
-      
+    
     if node.data == data
       return node
     elsif data > node.data
@@ -64,18 +72,8 @@ class Tree
       insert(data, node.left_child, prev_node = node, child = 'left')
     end    
   end
-
-  # Finds the left most leaf in given node
-  def minimum_value( node )
-    current = node
-
-    while current.left_child != nil do
-      current = current.left_child
-    end
-
-    return current
-  end
-
+  
+  
   # If node to be deleted is a leaf, simply remove it from the tree
   # If node to be deleted has one child, copy child to the node and delete child
   # If node to be deleted has two children, Find Inorder successor (next node in line
@@ -100,16 +98,21 @@ class Tree
       delete(key, node.right_child, node, right)
     end
   end
-
+  
   def find( key, node = root )
     return nil if node.nil?
     return node if node.data == key
-
+    
     if key > node.data
       find( key, node.right_child )
     elsif key < node.data
       find( key, node.left_child )
     end
+  end
+  
+  # Find inorder successor of node
+  def inorder_successor(n, node = root)
+    #Enter code for in order successor
   end
 
   # Method to return tree in a readable output
