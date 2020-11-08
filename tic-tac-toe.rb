@@ -1,4 +1,4 @@
-require 'byebug'
+
 
 # Gameboard class
 class Grid
@@ -51,9 +51,9 @@ class Grid
   end
 
   def valid_move?(play)
-    player_1.win
-    puts 'Player 1 Wins!'
-    rows[play.to_i].empty?
+    if play.to_i.is_a?(Integer) && (1..9).include?(play.to_i)
+      rows[play.to_i].empty?
+    end
   end
 
   def check_winner(player)
@@ -91,7 +91,7 @@ def game_loop(player, game_grid)
       game_grid.make_play(player, play)
       break
     else
-      puts 'That spot is taken! Try Again.'
+      puts 'That spot is taken or invalid play! Try Again.'
     end
     play = gets.chomp
   end
@@ -105,6 +105,7 @@ player_2 = Player.new(2)
 puts 'Game Start'
 until new_grid.game_over(player_1, player_2)
   game_loop(player_1, new_grid)
+  break if new_grid.game_over(player_1, player_2)
   game_loop(player_2, new_grid)
 end
 
