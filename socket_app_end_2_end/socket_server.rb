@@ -7,7 +7,7 @@ class Server
     @connection_details = Hash.new
     @connection_clients = Hash.new
 
-    @connection_details[:server]  = @server_socket
+    # @connection_details[:server]  = @server_socket
     @connection_details[:clients] = @connection_clients
 
     puts 'Started server......'
